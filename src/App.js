@@ -60,6 +60,9 @@ function Friend({ friend }) {
       {friend.balance === 0 && (
         <p className="">You and {friend.name} are even</p>
       )}
+      <button className="button">Select</button>
     </li>
   );
 }
+
+// Add Friend Form
