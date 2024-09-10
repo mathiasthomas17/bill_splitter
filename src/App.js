@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 
 const initialFriends = [
@@ -21,16 +22,41 @@ const initialFriends = [
   },
 ];
 
+// Button Component for reuse
+<Button onClick="">Add Friends</Button>;
+function Button({ children, onClick }) {
+  return (
+    <button className="button" onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+
 // App Component
 export default function App() {
+  const [friends, setFriends] = useState(initialFriends);
+
   // hide and Show Add Friend Form State
   const [showFriendForm, setShowFriendForm] = useState(false);
+
+  // Handle Add Friends
+  function handleAddFriend(friend) {
+    setFriends((friends) => [...friends, friend]);
+    // hide form after submitting
+    setShowFriendForm(false);
+  }
+
+  function handleShowAddFriendForm() {
+    setShowFriendForm((show) => !show);
+  }
   return (
     <div className="app">
       <div className="sidebar">
-        <FriendsList />
-        <AddFriendFrom />
-        <Button>Add Friends</Button>
+        <FriendsList friends={friends} />
+        {showFriendForm && <AddFriendFrom onAddFriend={handleAddFriend} />}
+        <Button onClick={handleShowAddFriendForm}>
+          {showFriendForm ? "Close" : "Add Friends"}
+        </Button>
       </div>
       <FormSplitBill />
     </div>
@@ -38,10 +64,10 @@ export default function App() {
 }
 
 // Friends List Components
-function FriendsList() {
+function FriendsList({ friends }) {
   return (
     <ul>
-      {initialFriends.map((friend) => (
+      {friends.map((friend) => (
         <Friend friend={friend} key={friend.id} />
       ))}
     </ul>
@@ -73,19 +99,41 @@ function Friend({ friend }) {
   );
 }
 
-// Button Component for reuse
-function Button({ children }) {
-  return <button className="button">{children}</button>;
-}
 // Add Friend Form
 
-function AddFriendFrom() {
+function AddFriendFrom({ onAddFriend }) {
+  // Controlled elements/State
+  const [name, setName] = useState("");
+  const [image, setImage] = useState("https://i.pravatar.cc/48");
+  const id = crypto.randomUUID();
+  function handleAddUserSubmit(e) {
+    e.preventDefault();
+    // Guard Clause
+    if (!name || !image) return;
+    const newFriend = {
+      name,
+      image: `${image}?u=${id}`,
+      balance: 0,
+      id,
+    };
+    onAddFriend(newFriend);
+    setName("");
+    setImage("https://i.pravatar.cc/48");
+  }
   return (
-    <form className="form-add-friend">
+    <form className="form-add-friend" onSubmit={handleAddUserSubmit}>
       <label>👯‍♂️Friend name</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+      />
       <label>Image URL</label>
-      <input type="text" />
+      <input
+        type="text"
+        value={image}
+        onChange={(e) => setImage(e.target.value)}
+      />
       <Button>Add</Button>
     </form>
   );
