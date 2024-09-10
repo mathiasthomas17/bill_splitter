@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialFriends = [
   {
     id: 118836,
@@ -21,6 +23,8 @@ const initialFriends = [
 
 // App Component
 export default function App() {
+  // hide and Show Add Friend Form State
+  const [showFriendForm, setShowFriendForm] = useState(false);
   return (
     <div className="app">
       <div className="sidebar">
