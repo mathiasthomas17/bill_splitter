@@ -57,6 +57,10 @@ export default function App() {
     setShowFriendForm(false);
   }
 
+  function handleSplitBill(value) {
+    console.log(value);
+  }
+
   return (
     <div className="app">
       <div className="sidebar">
@@ -71,7 +75,12 @@ export default function App() {
           {showFriendForm ? "Close" : "Add Friends"}
         </Button>
       </div>
-      {selectedFriend && <FormSplitBill selectedFriend={selectedFriend} />}
+      {selectedFriend && (
+        <FormSplitBill
+          selectedFriend={selectedFriend}
+          onSplitBill={handleSplitBill}
+        />
+      )}
     </div>
   );
 }
@@ -161,14 +170,20 @@ function AddFriendFrom({ onAddFriend }) {
 }
 
 // Form Split Bill
-function FormSplitBill({ selectedFriend }) {
+function FormSplitBill({ selectedFriend, onSplitBill }) {
   // Split Bill Controlled Elelments
   const [bill, setBill] = useState("");
   const [paidByUser, setPaidByUser] = useState("");
   const paidByFriend = bill ? bill - paidByUser : "";
   const [whoIsPaying, setWhoIsPaying] = useState("You");
+
+  // Handle Submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!bill || !paidByUser) return;
+  }
   return (
-    <form className="form-split-bill">
+    <form className="form-split-bill" onSubmit={handleSubmit}>
       <h2> Split a bill with {selectedFriend.name}</h2>
       <label>💶 Bill Value</label>
       <input
