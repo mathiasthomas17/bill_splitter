@@ -59,6 +59,13 @@ export default function App() {
 
   function handleSplitBill(value) {
     console.log(value);
+    setFriends((friends) =>
+      friends.map((friend) =>
+        friend.id === selectedFriend.id
+          ? { ...friend, balance: friend.balance + value }
+          : friend
+      )
+    );
   }
 
   return (
@@ -181,6 +188,7 @@ function FormSplitBill({ selectedFriend, onSplitBill }) {
   function handleSubmit(e) {
     e.preventDefault();
     if (!bill || !paidByUser) return;
+    onSplitBill(whoIsPaying === "user" ? paidByFriend : -paidByUser);
   }
   return (
     <form className="form-split-bill" onSubmit={handleSubmit}>
